@@ -20,15 +20,16 @@ pub fn build(b: *Builder) void {
     exe.addIncludeDir("/usr/local/include");
 
     exe.linkLibC();
-    exe.linkSystemLibrary("glfw");
 
     switch (std.Target.current.os.tag) {
         .linux => {
-            exe.linkSystemLibrary("GL");
+            exe.linkSystemLibrary("gl");
+            exe.linkSystemLibrary("glfw3");
         },
         .macos => {
             exe.addFrameworkDir("/System/Library/Frameworks");
             exe.linkFramework("OpenGL");
+            exe.linkSystemLibrary("glfw");
         },
         else => {
             @panic("don't know how to build on your system");
