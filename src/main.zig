@@ -2,7 +2,17 @@ const std = @import("std");
 const c = @cImport({
     @cInclude("GLFW/glfw3.h");
     @cInclude("libretro.h");
-    @cInclude("OpenGL/gl.h");
+    switch (std.Target.current.os.tag) {
+        .macos => {
+            @cInclude("OpenGL/gl.h");
+        },
+        .linux => {
+            @cInclude("GL/gl.h");
+        },
+        else => {
+            @panic("unsupported system");
+        },
+    }
 });
 const panic = std.debug.panic;
 
