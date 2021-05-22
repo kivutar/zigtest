@@ -12,6 +12,15 @@ fn errorCallback(err: c_int, description: [*c]const u8) callconv(.C) void {
     panic("Error: {}\n", .{description});
 }
 
+fn keyCallback(win: ?*c.GLFWwindow, key: c_int, scancode: c_int, action: c_int, mods: c_int) callconv(.C) void {
+    if (action != c.GLFW_PRESS) return;
+
+    switch (key) {
+        c.GLFW_KEY_ESCAPE => c.glfwSetWindowShouldClose(win, c.GL_TRUE),
+        else => {},
+    }
+}
+
 pub fn main() !void {
     _ = c.glfwSetErrorCallback(errorCallback);
 
@@ -25,6 +34,7 @@ pub fn main() !void {
     };
     defer c.glfwDestroyWindow(window);
 
+    _ = c.glfwSetKeyCallback(window, keyCallback);
     c.glfwMakeContextCurrent(window);
 
     var lib = try std.DynLib.open("/Users/kivutar/ludo/cores/snes9x_libretro.dylib");

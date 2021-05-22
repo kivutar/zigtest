@@ -20,5 +20,6 @@ jobs:
         with:
           version: 0.7.1
       - run: brew install glfw
+      - run: ln -s "$(xcrun --sdk macosx --show-sdk-path)/System/Library/Frameworks/OpenGL.framework/Headers" /usr/local/include/OpenGL
       - run: zig fmt --check src/*.zig
       - run: ZIG_SYSTEM_LINKER_HACK=1 zig build
