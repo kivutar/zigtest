@@ -23,6 +23,9 @@ pub fn build(b: *Builder) void {
     exe.linkSystemLibrary("glfw");
 
     switch (std.Target.current.os.tag) {
+        .linux => {
+            exe.linkSystemLibrary("GL");
+        },
         .macos => {
             exe.addFrameworkDir("/System/Library/Frameworks");
             exe.linkFramework("OpenGL");
