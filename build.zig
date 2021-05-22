@@ -23,7 +23,9 @@ pub fn build(b: *Builder) void {
 
     switch (std.Target.current.os.tag) {
         .linux => {
-            exe.linkSystemLibrary("gl");
+            exe.addLibPath("/usr/lib");
+            exe.addLibPath("/usr/lib/x86_64-linux-gnu");
+            exe.linkSystemLibrary("GL");
             exe.linkSystemLibrary("glfw3");
         },
         .macos => {
