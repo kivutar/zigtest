@@ -20,6 +20,7 @@ pub fn build(b: *Builder) void {
     exe.addIncludeDir("/usr/local/include");
 
     exe.linkLibC();
+    exe.linkSystemLibrary("dl");
 
     switch (std.Target.current.os.tag) {
         .linux => {
