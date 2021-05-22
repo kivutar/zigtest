@@ -17,4 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: goto-bus-stop/setup-zig@v1
+        with:
+          version: 0.7.1
       - run: ZIG_SYSTEM_LINKER_HACK=1 zig build

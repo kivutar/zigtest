@@ -34,9 +34,10 @@ pub fn main() !void {
     //retro_init();
 
     c.glfwSwapInterval(1);
+    c.glClearColor(0.0, 0.0, 0.0, 1.0);
 
     while (c.glfwWindowShouldClose(window) == c.GL_FALSE) {
-        c.glClearColor(0.0, 0.0, 0.0, 1.0);
+        c.glClear(c.GL_COLOR_BUFFER_BIT);
         c.glfwPollEvents();
         c.glfwSwapBuffers(window);
     }
