@@ -8,7 +8,13 @@ const panic = std.debug.panic;
 
 var window: *c.GLFWwindow = undefined;
 
+fn errorCallback(err: c_int, description: [*c]const u8) callconv(.C) void {
+    panic("Error: {}\n", .{description});
+}
+
 pub fn main() !void {
+    _ = c.glfwSetErrorCallback(errorCallback);
+
     if (c.glfwInit() == c.GL_FALSE) {
         panic("GLFW init failure\n", .{});
     }
@@ -25,7 +31,6 @@ pub fn main() !void {
     defer lib.close();
 
     const retro_init = lib.lookup(fn () callconv(.C) void, "retro_init") orelse return error.SymbolNotFound;
-
     //retro_init();
 
     c.glfwSwapInterval(1);

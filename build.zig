@@ -17,12 +17,20 @@ pub fn build(b: *Builder) void {
     exe.setBuildMode(mode);
 
     exe.addIncludeDir("src");
+    exe.addIncludeDir("/usr/local/include");
 
     exe.linkLibC();
     exe.linkSystemLibrary("glfw");
 
-    exe.addFrameworkDir("/System/Library/Frameworks");
-    exe.linkFramework("OpenGL");
+    switch (std.Target.current.os.tag) {
+        .macos => {
+            exe.addFrameworkDir("/System/Library/Frameworks");
+            exe.linkFramework("OpenGL");
+        },
+        else => {
+            @panic("don't know how to build on your system");
+        },
+    }
     
     exe.install();
 
