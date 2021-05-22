@@ -19,4 +19,6 @@ jobs:
       - uses: goto-bus-stop/setup-zig@v1
         with:
           version: 0.7.1
+      - run: brew install glfw
+      - run: zig fmt --check src/*.zig
       - run: ZIG_SYSTEM_LINKER_HACK=1 zig build
