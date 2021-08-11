@@ -19,7 +19,7 @@ const panic = std.debug.panic;
 var window: *c.GLFWwindow = undefined;
 
 fn errorCallback(err: c_int, description: [*c]const u8) callconv(.C) void {
-    panic("Error: {}\n", .{description});
+    panic("Error: {s}\n", .{description});
 }
 
 fn keyCallback(win: ?*c.GLFWwindow, key: c_int, scancode: c_int, action: c_int, mods: c_int) callconv(.C) void {
@@ -28,6 +28,30 @@ fn keyCallback(win: ?*c.GLFWwindow, key: c_int, scancode: c_int, action: c_int, 
     switch (key) {
         c.GLFW_KEY_ESCAPE => c.glfwSetWindowShouldClose(win, c.GL_TRUE),
         else => {},
+    }
+}
+
+fn setPixelFormat(format: c_int) bool {
+    switch(format) {
+        c.RETRO_PIXEL_FORMAT_XRGB8888 => {
+
+            return true;
+        },
+        else => {
+            return false;
+        }
+    }
+}
+
+fn environmentCb(cmd: c_uint, data: ?*c_void) callconv(.C) bool {
+    switch(cmd) {
+        c.RETRO_ENVIRONMENT_SET_PIXEL_FORMAT => {
+            return setPixelFormat(@ptrCast(comptime *c_int, data));
+        },
+        else => {
+            std.log.info("env={d}", .{cmd});
+            return false;
+        }
     }
 }
 
@@ -47,11 +71,25 @@ pub fn main() !void {
     _ = c.glfwSetKeyCallback(window, keyCallback);
     c.glfwMakeContextCurrent(window);
 
-    var lib = try std.DynLib.open("/Users/kivutar/ludo/cores/snes9x_libretro.dylib");
+    var lib = try std.DynLib.open("/Users/kivutar/nes/nes_libretro.dylib");
     defer lib.close();
 
-    const retro_init = lib.lookup(fn () callconv(.C) void, "retro_init") orelse return error.SymbolNotFound;
-    //retro_init();
+    const retro_set_environment = lib.lookup(fn (c.retro_environment_t) callconv(.C) void, "retro_set_environment")
+        orelse return error.SymbolNotFound;
+    retro_set_environment(environmentCb);
+
+    const retro_init = lib.lookup(fn () callconv(.C) void, "retro_init")
+        orelse return error.SymbolNotFound;
+    retro_init();
+
+    const retro_load_game = lib.lookup(fn (* const c.retro_game_info) callconv(.C) void, "retro_load_game")
+        orelse return error.SymbolNotFound;
+    retro_load_game(&c.retro_game_info{
+        .path = "",
+        .data = "",
+        .size = 0,
+        .meta = undefined,
+    });
 
     c.glfwSwapInterval(1);
     c.glClearColor(0.0, 0.0, 0.0, 1.0);
