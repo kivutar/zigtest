@@ -18,8 +18,8 @@ pub fn build(b: *Builder) void {
 
     switch (builtin.target.os.tag) {
         .linux => {
-            exe.addLibPath("/usr/lib");
-            exe.addLibPath("/usr/lib/x86_64-linux-gnu");
+            exe.addLibraryPath("/usr/lib");
+            exe.addLibraryPath("/usr/lib/x86_64-linux-gnu");
             exe.linkSystemLibrary("GL");
             exe.linkSystemLibrary("glfw3");
         },
