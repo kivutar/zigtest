@@ -2,7 +2,7 @@ const std = @import("std");
 const builtin = @import("builtin");
 
 const c = @cImport({
-    //@cInclude("GLFW/glfw3.h");
+    @cInclude("GLFW/glfw3.h");
     @cInclude("libretro.h");
     switch (builtin.target.os.tag) {
         .macos => {
