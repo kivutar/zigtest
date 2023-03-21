@@ -1,28 +1,22 @@
 const std = @import("std");
+const builtin = @import("builtin");
 const Builder = std.build.Builder;
 
 pub fn build(b: *Builder) void {
-    // Standard target options allows the person running `zig build` to choose
-    // what target to build for. Here we do not override the defaults, which
-    // means any target is allowed, and the default is native. Other options
-    // for restricting supported target set are available.
-    const target = b.standardTargetOptions(.{});
+    const exe = b.addExecutable(.{
+        .name = "zigtest",
+        .root_source_file = .{ .path = "src/main.zig" },
+        .target = b.standardTargetOptions(.{}),
+        .optimize = b.standardOptimizeOption(.{}),
+    });
 
-    // Standard release options allow the person running `zig build` to select
-    // between Debug, ReleaseSafe, ReleaseFast, and ReleaseSmall.
-    const mode = b.standardReleaseOptions();
-
-    const exe = b.addExecutable("zigtest", "src/main.zig");
-    exe.setTarget(target);
-    exe.setBuildMode(mode);
-
-    exe.addIncludeDir("src");
-    exe.addIncludeDir("/usr/local/include");
+    exe.addIncludePath("src");
+    exe.addIncludePath("/usr/local/include/");
 
     exe.linkLibC();
     exe.linkSystemLibrary("dl");
 
-    switch (std.Target.current.os.tag) {
+    switch (builtin.target.os.tag) {
         .linux => {
             exe.addLibPath("/usr/lib");
             exe.addLibPath("/usr/lib/x86_64-linux-gnu");
@@ -30,15 +24,26 @@ pub fn build(b: *Builder) void {
             exe.linkSystemLibrary("glfw3");
         },
         .macos => {
-            exe.addFrameworkDir("/System/Library/Frameworks");
+            exe.addIncludePath("/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers");
+            exe.addIncludePath("/System/Library/Frameworks/OpenGL.framework/Headers/");
+            exe.addIncludePath("/opt/homebrew/Cellar/glfw/3.3.8/include/");
+            exe.addFrameworkPath("/System/Library/Frameworks");
             exe.linkFramework("OpenGL");
             exe.linkSystemLibrary("glfw");
+        },
+        .windows => {
+            exe.linkSystemLibrary("glfw3");
+            exe.linkSystemLibrary("c");
+            exe.linkSystemLibrary("opengl32");
+            exe.linkSystemLibrary("user32");
+            exe.linkSystemLibrary("gdi32");
+            exe.linkSystemLibrary("shell32");
         },
         else => {
             @panic("don't know how to build on your system");
         },
     }
-    
+
     exe.install();
 
     const run_cmd = exe.run();

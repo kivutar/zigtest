@@ -16,9 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: goto-bus-stop/setup-zig@v1
+      - uses: goto-bus-stop/setup-zig@v2
         with:
-          version: 0.7.1
+          version: 0.11.0
       - run: sudo apt-get update -q
       - run: sudo apt-get install libglfw3-dev xorg-dev libgl1-mesa-dev -y --allow-unauthenticated
       - run: zig fmt --check src/*.zig
@@ -28,9 +28,9 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: goto-bus-stop/setup-zig@v1
+      - uses: goto-bus-stop/setup-zig@v2
         with:
-          version: 0.7.1
+          version: 0.11.0
       - run: brew install glfw
       - run: ln -s "$(xcrun --sdk macosx --show-sdk-path)/System/Library/Frameworks/OpenGL.framework/Headers" /usr/local/include/OpenGL
       - run: zig fmt --check src/*.zig
