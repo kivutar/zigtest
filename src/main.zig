@@ -78,13 +78,13 @@ pub fn main() !void {
     var lib = try std.DynLib.open("/Users/kivutar/nes/nes_libretro.dylib");
     defer lib.close();
 
-    const retro_set_environment = lib.lookup(fn (c.retro_environment_t) callconv(.C) void, "retro_set_environment") orelse return error.SymbolNotFound;
+    const retro_set_environment = lib.lookup(*const fn (c.retro_environment_t) callconv(.C) void, "retro_set_environment") orelse return error.SymbolNotFound;
     retro_set_environment(environmentCb);
 
-    const retro_init = lib.lookup(fn () callconv(.C) void, "retro_init") orelse return error.SymbolNotFound;
+    const retro_init = lib.lookup(*const fn () callconv(.C) void, "retro_init") orelse return error.SymbolNotFound;
     retro_init();
 
-    const retro_load_game = lib.lookup(fn (*const c.retro_game_info) callconv(.C) void, "retro_load_game") orelse return error.SymbolNotFound;
+    const retro_load_game = lib.lookup(*const fn (*const c.retro_game_info) callconv(.C) void, "retro_load_game") orelse return error.SymbolNotFound;
     retro_load_game(&c.retro_game_info{
         .path = "",
         .data = "",
