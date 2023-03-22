@@ -24,8 +24,8 @@ pub fn build(b: *Builder) void {
             exe.linkSystemLibrary("glfw3");
         },
         .macos => {
+            // had to ln -s /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers /usr/local/include/OpenGL
             exe.addIncludePath("/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers");
-            exe.addIncludePath("/System/Library/Frameworks/OpenGL.framework/Headers/");
             exe.addIncludePath("/opt/homebrew/Cellar/glfw/3.3.8/include/");
             exe.addFrameworkPath("/System/Library/Frameworks");
             exe.linkFramework("OpenGL");
